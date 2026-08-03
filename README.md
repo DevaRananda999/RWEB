@@ -102,7 +102,7 @@ Ikuti panduan berikut untuk menjalankan project di sistem lokal Anda:
    ```bash
    php artisan serve
    ```
-   Akses aplikasi di: **http://localhost:8000](https://rweb-git-main-aallvviinns-projects.vercel.app/dashboard**
+   Akses aplikasi di: **https://rweb-git-main-aallvviinns-projects.vercel.app/dashboard**
 
 ---
 
