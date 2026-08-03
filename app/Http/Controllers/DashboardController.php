@@ -37,6 +37,9 @@ class DashboardController extends Controller
             ->get();
 
         $menuTerlaris = DetailPesanan::selectRaw('menu_id, SUM(jumlah) as total_terjual')
+            ->whereHas('order', function ($query) {
+                $query->where('status', '!=', 'dibatalkan');
+            })
             ->with('menu')
             ->groupBy('menu_id')
             ->orderByDesc('total_terjual')
