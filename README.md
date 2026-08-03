@@ -115,3 +115,5 @@ Anda dapat menggunakan akun berikut untuk masuk ke sistem:
 
 ---
 *Dibuat untuk memenuhi tugas Rekayasa Web Semester 6 — Sistem Point of Sale Restoran.*
+
+DOMAIN WEBSITE : https://rweb-git-main-aallvviinns-projects.vercel.app/dashboard
