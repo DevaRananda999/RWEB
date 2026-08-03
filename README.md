@@ -102,7 +102,7 @@ Ikuti panduan berikut untuk menjalankan project di sistem lokal Anda:
    ```bash
    php artisan serve
    ```
-   Akses aplikasi di: **http://localhost:8000**
+   Akses aplikasi di: **http://localhost:8000](https://rweb-git-main-aallvviinns-projects.vercel.app/dashboard**
 
 ---
 
@@ -116,4 +116,3 @@ Anda dapat menggunakan akun berikut untuk masuk ke sistem:
 ---
 *Dibuat untuk memenuhi tugas Rekayasa Web Semester 6 — Sistem Point of Sale Restoran.*
 
-DOMAIN WEBSITE : https://rweb-git-main-aallvviinns-projects.vercel.app/dashboard
