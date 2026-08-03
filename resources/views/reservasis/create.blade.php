@@ -32,9 +32,14 @@
                     <select id="meja_id" name="meja_id" class="form-control" required>
                         <option value="">— Pilih Meja —</option>
                         @foreach($mejas as $meja)
-                            <option value="{{ $meja->id }}" {{ old('meja_id') == $meja->id ? 'selected' : '' }}>
+                            <option value="{{ $meja->id }}"
+                                {{ old('meja_id') == $meja->id ? 'selected' : '' }}
+                                {{ $meja->status !== 'available' ? 'disabled' : '' }}>
                                 Meja {{ $meja->nomor_meja }} ({{ $meja->kapasitas }} orang)
-                                {{ $meja->status !== 'available' ? '— '.$meja->status : '' }}
+                                @if($meja->status === 'reserved') — 🔒 RESERVED
+                                @elseif($meja->status === 'occupied') — 🍽️ TERISI
+                                @else — ✅ Tersedia
+                                @endif
                             </option>
                         @endforeach
                     </select>

@@ -46,16 +46,20 @@ class ReservasiController extends Controller
             'catatan' => ['nullable', 'string', 'max:255'],
         ]);
 
+        // Cek apakah meja masih available
+        $meja = Meja::findOrFail($validated['meja_id']);
+        if ($meja->status !== 'available') {
+            return back()->withInput()->with('error', 'Meja ' . $meja->nomor_meja . ' sudah tidak tersedia (status: ' . $meja->status . ').');
+        }
+
         $validated['status'] = 'menunggu';
 
         Reservasi::create($validated);
 
-        $meja = Meja::find($validated['meja_id']);
-        if ($meja && $meja->status === 'available') {
-            $meja->update(['status' => 'reserved']);
-        }
+        // Otomatis ubah status meja menjadi reserved
+        $meja->update(['status' => 'reserved']);
 
-        return redirect()->route('reservasis.index')->with('success', 'Reservasi berhasil dibuat.');
+        return redirect()->route('reservasis.index')->with('success', 'Reservasi berhasil dibuat! Meja ' . $meja->nomor_meja . ' sekarang berstatus RESERVED.');
     }
 
     public function edit(Reservasi $reservasi): View

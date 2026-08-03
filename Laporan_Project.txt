@@ -1,0 +1,78 @@
+LAPORAN PROJECT REKAYASA WEB
+Sistem Point of Sale (POS) Restoran Fine Dining
+======================================================
+
+1. INFORMASI PROJECT
+------------------------------------------------------
+Nama Project    : Fine Dining POS (Point of Sale)
+Mata Kuliah     : Rekayasa Web (Semester 6)
+Platform        : Website Aplikasi
+Framework       : Laravel 11 (PHP 8.2+)
+Database        : MySQL / MariaDB
+Konsep Desain   : Premium Dark Elegant & Glassmorphism
+
+2. DESKRIPSI PROJECT
+------------------------------------------------------
+Fine Dining POS adalah sebuah sistem kasir (Point of Sale) dan manajemen restoran yang dirancang khusus untuk memenuhi standar operasional restoran mewah (Fine Dining). Sistem ini bertujuan untuk mendigitalisasi proses pemesanan, pencatatan transaksi, manajemen meja, dan pemantauan stok menu secara real-time melalui antarmuka yang elegan, cepat, dan mudah digunakan.
+
+3. ARSITEKTUR DAN TEKNOLOGI
+------------------------------------------------------
+- Backend       : PHP 8.2+ dengan Framework Laravel 11
+- Frontend      : Blade Templating Engine, HTML5, Vanilla CSS3 (Glassmorphism UI)
+- Database      : Relasional (MySQL) menggunakan Eloquent ORM
+- Keamanan      : Otentikasi sesi bawaan Laravel, Middleware khusus Admin, Proteksi CSRF
+- Concurrency   : Penerapan "Pessimistic Locking" (lockForUpdate) pada database untuk mencegah masalah "race condition" saat transaksi stok menu yang bersamaan.
+
+4. STRUKTUR DATABASE (MIGRATION)
+------------------------------------------------------
+Sistem ini menggunakan 7 tabel utama yang saling berelasi:
+1. `users`            : Menyimpan data kredensial login admin/kasir.
+2. `mejas`            : Menyimpan data meja restoran, kapasitas tamu, dan status (available, occupied, reserved).
+3. `menus`            : Menyimpan data daftar menu masakan, kategori, harga, stok fisik, dan status ketersediaan.
+4. `orders`           : Tabel transaksi utama (Header POS), menyimpan total tagihan, jumlah bayar, kembalian, dan ID meja.
+5. `detail_pesanans`  : Tabel rincian transaksi (Line items), menghubungkan order dengan menu yang dipesan beserta kuantitasnya.
+6. `reservasis`       : Menyimpan data pemesanan meja di muka (booking), data pemesan, jadwal, dan status reservasi.
+7. `pembayarans`      : Menyimpan riwayat metode pembayaran (Tunai, Kartu Kredit, Debit, QRIS) untuk pelaporan.
+
+5. MODUL DAN FITUR UTAMA
+------------------------------------------------------
+
+A. MODUL AUTENTIKASI (LOGIN)
+   - Halaman login khusus pegawai/admin restoran.
+   - Menggunakan desain efek blur (Glassmorphism) yang terkesan eksklusif.
+
+B. MODUL DASHBOARD (RINGKASAN)
+   - Menampilkan metrik utama secara real-time: Total Meja Tersedia, Order Diproses, Pendapatan Hari Ini, dan Reservasi.
+   - Peringatan Cerdas (Smart Alert): Sistem mendeteksi dan menampilkan daftar menu yang stoknya hampir habis (kurang dari 5 item).
+   - Menampilkan tabel order terbaru dan menu-menu dengan penjualan terlaris.
+
+C. MODUL MANAJEMEN MEJA (TABLE MANAGEMENT)
+   - Fitur CRUD (Create, Read, Update, Delete) meja.
+   - Sistem perubahan status otomatis:
+     * Meja otomatis menjadi 'Terisi' jika ada order yang aktif.
+     * Meja otomatis menjadi 'Tersedia' setelah order selesai dibayar.
+
+D. MODUL MANAJEMEN MENU
+   - Fitur CRUD katalog menu makanan dan minuman.
+   - Pengelompokkan menu berdasarkan kategori standar restoran: Appetizer, Main Course, Dessert, Drink.
+   - Fitur tombol *toggle* Ketersediaan (Tersedia / Habis) untuk penyesuaian instan tanpa menghapus data.
+
+E. MODUL POINT OF SALE (KASIR & TRANSAKSI)
+   - Halaman antarmuka kasir satu pintu (Single Page Layout) dengan 3 panel utama: Daftar Meja, Grid Menu, dan Keranjang (Cart).
+   - Fitur "Live Search" dan Filter Kategori untuk pencarian menu yang instan.
+   - Sistem perhitungan tagihan subtotal, pajak (jika ada), dan total akhir secara otomatis.
+   - Sinkronisasi Stok: Saat pesanan dimasukkan, sistem otomatis memotong stok di database menggunakan Transaction (DB::transaction) untuk menjamin konsistensi data.
+
+F. MODUL PEMBAYARAN & STRUK
+   - Halaman Checkout terpisah untuk keamanan.
+   - Pilihan multi-metode pembayaran (Cash, Debit Card, Credit Card, QRIS).
+   - Tombol "Quick Amount" (Cepat Bayar) untuk mata uang umum (Rp 50.000, Rp 100.000, dll).
+   - Fitur Cetak Struk (Print Receipt) minimalis dan siap cetak pada printer kasir thermal.
+
+G. MODUL RESERVASI
+   - Fitur untuk mencatat tamu yang melakukan pemesanan jadwal kunjungan (booking).
+   - Terhubung langsung dengan tabel meja untuk mengunci status meja menjadi 'Reserved' pada tanggal dan waktu yang ditentukan.
+
+6. KESIMPULAN
+------------------------------------------------------
+Aplikasi Fine Dining POS ini telah memenuhi kriteria sistem transaksi yang handal dengan menerapkan konsep basis data transaksional, arsitektur MVC (Model-View-Controller) yang solid melalui Laravel, serta mengedepankan pengalaman pengguna (User Experience) yang premium sesuai dengan konsep restoran Fine Dining.

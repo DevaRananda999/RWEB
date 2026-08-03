@@ -45,7 +45,33 @@ class PembayaranController extends Controller
 
         $order->load(['meja', 'kasir', 'detailPesanans.menu']);
 
-        return view('pembayarans.checkout', compact('order'));
+        // Set Midtrans configuration
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        \Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        \Midtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED', true);
+        \Midtrans\Config::$is3ds = env('MIDTRANS_IS_3DS', true);
+
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => $order->kode_order . '-' . time(),
+                'gross_amount' => $order->total_harga,
+            ),
+            'customer_details' => array(
+                'first_name' => 'Meja ' . ($order->meja->nomor_meja ?? 'Unknown'),
+            ),
+            'enabled_payments' => ['gopay', 'shopeepay', 'other_qris'],
+        );
+
+        $snapToken = '';
+        try {
+            if (env('MIDTRANS_SERVER_KEY')) {
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+            }
+        } catch (\Exception $e) {
+            // Handle error quietly or log it
+        }
+
+        return view('pembayarans.checkout', compact('order', 'snapToken'));
     }
 
     /**
@@ -58,9 +84,14 @@ class PembayaranController extends Controller
         }
 
         $validated = $request->validate([
-            'metode_pembayaran' => ['required', 'in:tunai,kartu_debit,kartu_kredit,qris'],
-            'jumlah_bayar' => ['required', 'numeric', 'min:'.$order->total_harga],
+            'metode_pembayaran' => ['required', 'in:qris,tunai'],
+            'jumlah_bayar' => ['required_if:metode_pembayaran,tunai', 'nullable', 'numeric', 'min:'.$order->total_harga],
         ]);
+
+        // Untuk QRIS, jumlah bayar = total harga (pas, tanpa kembalian)
+        if ($validated['metode_pembayaran'] === 'qris') {
+            $validated['jumlah_bayar'] = $order->total_harga;
+        }
 
         DB::transaction(function () use ($validated, $order) {
             $kembalian = $validated['jumlah_bayar'] - $order->total_harga;

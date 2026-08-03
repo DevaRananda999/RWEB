@@ -11,7 +11,14 @@ class MejaController extends Controller
 {
     public function index(): View
     {
-        $mejas = Meja::withCount('orders')->orderBy('nomor_meja')->paginate(12);
+        $mejas = Meja::withCount('orders')
+            ->with(['reservasis' => function ($query) {
+                $query->whereIn('status', ['menunggu', 'dikonfirmasi'])
+                      ->latest()
+                      ->limit(1);
+            }])
+            ->orderBy('nomor_meja')
+            ->paginate(12);
 
         return view('mejas.index', compact('mejas'));
     }
